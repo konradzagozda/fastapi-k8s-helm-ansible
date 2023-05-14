@@ -5,6 +5,7 @@
 - docker
 - minikube
 - kubectl
+- helm
 
 ## Setup
 
@@ -63,3 +64,8 @@ application is deployed here:
 ```sh
 curl http://hello-kube.local/
 ```
+
+## Ticket 3
+
+updated `app-hello-kube` to use helm chart from raw kubernetes objects
+

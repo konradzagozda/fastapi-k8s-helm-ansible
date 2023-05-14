@@ -1,0 +1,14 @@
+replicaCount: 1
+
+name: app-hello-kube
+
+image:
+  repository: registry.local/hello-kube
+  tag: latest
+  pullPolicy: Always
+
+service:
+  type: ClusterIP
+
+ingress:
+  host: "hello-kube.local"
