@@ -1,0 +1,28 @@
+---
+- name: Deploy Application to Kubernetes
+  hosts: localhost
+  vars:
+    env: default
+  tasks:
+    - name: Build Docker image for app
+      shell: docker build ../../app-hello-kube -t registry.local/hello-kube:{{ env }}
+      any_errors_fatal: true
+
+    - name: Push Docker image
+      shell: docker push registry.local/hello-kube:{{ env }}
+      any_errors_fatal: true
+
+    - name: Install helm chart for app
+      command: > 
+        helm install app-hello-kube-{{ env }} ../app-hello-kube
+        --set env={{ env }}
+      any_errors_fatal: true
+
+    - name: Check that the app is accessible
+      uri:
+        url: "http://hello-{{ env }}-kube.local"
+        status_code: 200
+      register: result
+      until: result.status == 200
+      retries: 6
+      delay: 10

@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.name }}
+  namespace: {{ .Values.env }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -13,9 +14,12 @@ spec:
         app: {{ .Values.name }}
     spec:
       containers:
-        - image: {{ printf "%s:%s" .Values.image.repository .Values.image.tag | quote }}
+        - image: {{ printf "%s:%s" .Values.image.repository .Values.env | quote }}
           name: {{ .Values.name }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: 80
               name: http
+          env:
+            - name: ENVIRONMENT
+              value: {{ .Values.env }}
