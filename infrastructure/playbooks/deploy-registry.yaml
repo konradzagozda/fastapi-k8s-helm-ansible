@@ -1,0 +1,23 @@
+---
+- name: Deploy Registry to Kubernetes
+  hosts: localhost
+  tasks:
+    - name: Apply registry deployment
+      command: kubectl apply -f ../registry/registry-deployment.yaml
+      any_errors_fatal: true
+
+    - name: Apply registry service
+      command: kubectl apply -f ../registry/registry-service.yaml
+      any_errors_fatal: true
+
+    - name: Apply registry pv
+      command: kubectl apply -f ../registry/registry-pv.yaml
+      any_errors_fatal: true
+
+    - name: Apply registry pvc
+      command: kubectl apply -f ../registry/registry-pvc.yaml
+      any_errors_fatal: true
+
+    - name: Apply registry ingress
+      command: kubectl apply -f ../registry/registry-ingress.yaml
+      any_errors_fatal: true

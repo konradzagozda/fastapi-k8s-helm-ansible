@@ -1,0 +1,16 @@
+---
+- name: Create Kubernetes Namespaces
+  hosts: localhost
+  tasks:
+    - name: Create Dev Namespace
+      command: kubectl apply -f ../namespaces/dev-namespace.yaml
+      any_errors_fatal: true
+
+    - name: Create Prod Namespace
+      command: kubectl apply -f ../namespaces/prod-namespace.yaml
+      any_errors_fatal: true
+
+    - name: Create UAT Namespace
+      command: kubectl apply -f ../namespaces/uat-namespace.yaml
+      any_errors_fatal: true
+
