@@ -1,26 +1,60 @@
-With this exercise, you will be able to deploy dockerized applications into kubernetes clusters using helm and ansible.
+# Solution
 
-For the implementation, please follow the tickets written below. 
-For every ticket, please prepare a separate commit/pull-request showing incremental work. 
+## Requirements
 
-During the interview session, all the tickets will be demoed, reviewed and discussed. Please make sure you have access to the computer to do the demo by sharing the screen. 
+- docker
+- minikube
+- kubectl
+- helm
+- ansible
 
-# Ticket-1: Configure a local docker registry hosted on kubernetes
-- Make sure you can access from your machine and also within the cluster.
+## Setup
 
-# Ticket-2: Deploy a python web application to kubernetes
-- when you access the root of the application it should display "Hello Kube" message.
-- Build the image for the web application and push to the registry conifigured in Ticket-1
-- Deploy the web application to kubernetes
-- Make sure you are able to access from your laptop
+tell docker to trust the registry:
 
-# Ticket-3: Helm chart to deploy web application
-- Create a helm chart which can be used to deploy the application to kubernetes.
+```sh
+# /etc/docker/daemon.json (local machine)
+{
+  "insecure-registries" : ["registry.local"]
+}
+```
 
-# Ticket-4: Use ansible to automate the deployment
-- Ensure the web application is deployable to different namespaces (dev, uat, prod)
-- Instead of Hello Kube it should show Hello {{ENV}} Kube (dependent on the environment)
-- must wait for deployment to be successful, fail if unsuccessful 
+configure local dns
 
-## Nice to haves
-- collect the pod logs after deployment
+```sh
+# /etc/hosts
+...
+192.168.49.2    registry.local  # 192.168.49.2 get it from 'minikube ip'
+192.168.49.2    hello-default-kube.local
+192.168.49.2    hello-dev-kube.local
+192.168.49.2    hello-uat-kube.local
+192.168.49.2    hello-prod-kube.local
+```
+
+## First deployment
+
+```sh
+cd infrastructure/playbooks
+ansible-playbook deploy-all.yaml # setups local docker registry and namespaces for environments
+```
+
+app is ready here: <http://hello-default-kube.local>
+
+## Environments
+
+There are 4 environments to deploy to:
+
+- default: <http://hello-default-kube.local>
+- dev: <http://hello-dev-kube.local>
+- uat: <http://hello-uat-kube.local>
+- prod: <http://hello-prod-kube.local>
+
+## Further deployments
+
+```sh
+cd infrastructure/playbooks
+ansible-playbook deploy-app.yaml --extra-vars "env=default"
+ansible-playbook deploy-app.yaml --extra-vars "env=dev"
+ansible-playbook deploy-app.yaml --extra-vars "env=uat"
+ansible-playbook deploy-app.yaml --extra-vars "env=prod"
+```
